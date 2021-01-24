@@ -1,0 +1,13 @@
+note over selain
+selain lisää muistiinpanon
+listalle ja lähettää sen
+tiedot JSON muodossa
+palvelimelle POST pyynnön avulla
+end note
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over palvelin: 
+Palvelin tallentaa
+uuden muistiinpanon
+end note
+palvelin-->selain: HTTP response 201
