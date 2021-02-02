@@ -5,6 +5,7 @@ const App = (props) => {
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(Array.apply(null, new Array(props.anecdotes.length)).map(Number.prototype.valueOf,0))
   const [mostVotes, setMostVotes] = useState(0)
+  
   const handleNext = () => {
     let next = selected
     while(next === selected){
