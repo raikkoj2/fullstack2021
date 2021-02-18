@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
     //State variables
@@ -14,10 +14,10 @@ const App = () => {
     //run only once after firts render to fetch data from json server
     useEffect(() => {
         //fetch data from json server
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response => {
-                setPersons(response.data)
+        personService
+            .getAll()
+            .then(initialPersons => {
+                setPersons(initialPersons)
             })
     }, [])
 
@@ -33,16 +33,27 @@ const App = () => {
         
         //If person is already added -> alert, else add person
         //When alert is raised don't clear fields
-        if(persons.filter(person => person.name === newName).length !== 0){
-            alert(`${newName} is already added to phonebook`)
+        const filtered = persons.filter(person => person.name === newName)
+        if(filtered.length !== 0){
+            if(window.confirm(`${filtered[0].name} is already added to phonebook, replace the old number with a new one?`)){
+                personService
+                    .update(filtered[0].id, newPerson)
+                    .then(returnedPerson => {
+                        setPersons(persons.map(person => person.id !== filtered[0].id ? person : returnedPerson))
+                        setNewName('')
+                        setNewNumber('')
+                    })
+            }
         }else{
-            setPersons(persons.concat(newPerson))
-            //Clear fields after adding
-            setNewName('')
-            setNewNumber('')
-        }
-
-        
+            personService
+                .create(newPerson)
+                .then(createdPerson => {
+                    setPersons(persons.concat(createdPerson))
+                    setNewName('')
+                    setNewNumber('')
+                })
+                        
+        }     
     }
 
     //Update state variables
@@ -58,6 +69,13 @@ const App = () => {
         setNewFilter(event.target.value)
     }
 
+    const handleRemove = (id) => {
+       
+        personService
+            .remove(id)
+            .then(setPersons(persons.filter(p => p.id !== id)))
+        
+    }
     //Filter persons
     const personsToShow = persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
 
@@ -82,7 +100,7 @@ const App = () => {
             
             <h2>Numbers</h2>
 
-            <Persons persons={personsToShow} />
+            <Persons persons={personsToShow} handleRemove={handleRemove} />
             
         
         </div>
