@@ -3,6 +3,7 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
     //State variables
@@ -10,6 +11,8 @@ const App = () => {
     const [ newName, setNewName ] = useState('')
     const [ newNumber, setNewNumber ] = useState('')
     const [ newFilter, setNewFilter ] = useState('')
+    const [ success, setSuccess ] = useState('success')
+    const [ notifcationMessage, setNotificationMessage ] = useState(null)
 
     //run only once after firts render to fetch data from json server
     useEffect(() => {
@@ -42,6 +45,11 @@ const App = () => {
                         setPersons(persons.map(person => person.id !== filtered[0].id ? person : returnedPerson))
                         setNewName('')
                         setNewNumber('')
+                        showNotification(`Updated contact information of ${returnedPerson.name}`, 'success')
+                    })
+                    .catch(() => {
+                        showNotification(`Contact information of ${filtered[0].name} is alredy deleted from server`, 'error')
+                        setPersons(persons.filter(n => n !== filtered[0]))
                     })
             }
         }else{
@@ -51,6 +59,7 @@ const App = () => {
                     setPersons(persons.concat(createdPerson))
                     setNewName('')
                     setNewNumber('')
+                    showNotification(`Added contact information for ${createdPerson.name}`, 'success')
                 })
                         
         }     
@@ -73,8 +82,25 @@ const App = () => {
        
         personService
             .remove(id)
-            .then(setPersons(persons.filter(p => p.id !== id)))
+            .then(() => {
+                const removed = persons.filter(p => p.id === id)
+                setPersons(persons.filter(p => p.id !== id))
+                showNotification(`Removed contact information of ${removed[0].name}`, 'success')
+            })
+            .catch(() => {
+                const removed = persons.filter(p => p.id === id)
+                showNotification(`Contact information of ${removed[0].name} is alredy deleted from server`, 'error')
+                setPersons(persons.filter(n => n !== removed[0]))
+            })
         
+    }
+
+    const showNotification = (message, success) =>{
+        setNotificationMessage(message)
+        setSuccess(success)
+        setTimeout(() => {
+        setNotificationMessage(null)
+        }, 5000)
     }
     //Filter persons
     const personsToShow = persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
@@ -82,6 +108,8 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+
+            <Notification message={notifcationMessage} success={success} />
 
             <Filter 
             handleFilterChange={handleFilterChange}
