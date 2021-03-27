@@ -60,7 +60,9 @@ const App = () => {
                     setNewName('')
                     setNewNumber('')
                     showNotification(`Added contact information for ${createdPerson.name}`, 'success')
-                })
+                }).catch(error => {
+                    showNotification(`${error.response.data.error}`, 'error')
+                  })
                         
         }     
     }
