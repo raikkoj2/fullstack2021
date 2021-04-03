@@ -1,71 +1,94 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
-const initialBlogs = [
+const initialBlogs = [  
   {
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
-    likes: 7,
-  },
-  {
-    title: "Type wars",
-    author: "miikka",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
-  },
-  {
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    title: "Testi 1",
+    author: "Miikka",
+    url: "http://www.moikkamoi.com",
     likes: 5,
+    user: {
+      username: "raikkonen",
+      name: "Joonas Räikkönen",
+      _id: "6068ac782f3c2d7a40e57af6"
+    },
+    _id: "6068798366e0f345203e6f86"
   },
   {
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    likes: 12,
+    title: "Testi 2",
+    author: "Joonas",
+    url: "http://www.moikkamoi.com",
+    likes: 5,
+    user: {
+      username: "raikkonen",
+      name: "Joonas Räikkönen",
+      _id: "6068ac782f3c2d7a40e57af6"
+    },
+    _id: "60687a9dc49f1351809cb270"
   },
   {
-    title: "First class tests",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
-    likes: 10,
+    title: "Testi 3",
+    author: "Miikka",
+    url: "http://www.moikkamoi.com",
+    likes: 5,
+    user: {
+      username: "raikkonen",
+      name: "Joonas Räikkönen",
+      _id: "6068ac782f3c2d7a40e57af6"
+    },
+    _id: "60687b39a66a7747b4e27e69"
   },
   {
-    title: "TDD harms architecture",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-    likes: 0,
+    title: "Testi 4",
+    author: "Miikka",
+    url: "http://www.moikkamoi.com",
+    likes: 5,
+    user: {
+      username: "raikkonen",
+      name: "Joonas Räikkönen",
+      _id: "6068ac782f3c2d7a40e57af6"
+    },
+    _id: "6068825fa2b5e8330cddd222"
   },
   {
-    title: "Type wars",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
+    title: "Testi 5",
+    author: "Miikka",
+    url: "http://www.moikkamoi.com",
+    likes: 5,
+    user: {
+      username: "raikkonen",
+      name: "Joonas Räikkönen",
+      _id: "6068ac782f3c2d7a40e57af6"
+    },
+    _id: "60688278160c5c4518bd275c"
   },
   {
-    title: "Type wars",
-    author: "miikka",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
+    title: "Testi 6",
+    author: "Joonas",
+    url: "http://www.moikkamoi.com",
+    likes: 3000,
+    user: {
+      username: "raikkonen",
+      name: "Joonas Räikkönen",
+      _id: "6068ac782f3c2d7a40e57af6"
+    },
+    _id: "6068b41fafb88f25185f6b6a"
+  }
+]
+
+
+
+const initialUsers = [
+  {
+    username: "thekirsila",
+    name: "Miikka Kirsilä",
+    _id: "60685be77c96c2348471b4b6"
   },
   {
-    title: "Type wars",
-    author: "miikka",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
-  },
-  {
-    title: "Type wars",
-    author: "miikka",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
-  },
-  {
-    title: "Type wars",
-    author: "miikka",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
+    username: "raikkonen",
+    name: "Joonas Räikkönen",
+    _id: "6068ac782f3c2d7a40e57af6"
   }
 ]
 
@@ -78,10 +101,25 @@ const nonExistingId = async () => {
 }
 
 const blogsInDb = async () => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', ({ username: 1, name: 1, id: 1}))
   return blogs.map(blog => blog.toJSON())
 }
 
+const createInitialUsers = async () => {
+  const passwordHash1 = await bcrypt.hash('sekret', 10)
+  const passwordHash2 = await bcrypt.hash('salasana', 10)
+  
+  initialUsers[0].passwordHash = passwordHash1
+  initialUsers[1].passwordHash = passwordHash2
+
+  return initialUsers
+}
+
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(user => user.toJSON())
+}
+
 module.exports = {
-  initialBlogs, nonExistingId, blogsInDb
+  initialBlogs, nonExistingId, blogsInDb, createInitialUsers, usersInDb
 }

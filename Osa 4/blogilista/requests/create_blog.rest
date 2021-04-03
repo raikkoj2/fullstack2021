@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Impvb25hcyIsImlkIjoiNjA2OGFjNzgyZjNjMmQ3YTQwZTU3YWY2IiwiaWF0IjoxNjE3NDczMDYyLCJleHAiOjE2MTc0NzY2NjJ9.m5ccbTS46jLV1dHdJ1vJTCsHaxBHPi8Xl88zjOAbWyc
 
 {
-  "title": "Testi 3",
-  "author": "Miikka",
+  "title": "Testi 6",
+  "author": "Joonas",
   "url": "http://www.moikkamoi.com",
-  "likes": 5
+  "likes": 3000
 }
